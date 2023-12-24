@@ -1,5 +1,3 @@
-import requests
-from bs4 import BeautifulSoup
 from selenium import webdriver
 import time
 from selenium.webdriver.chrome.options import Options
@@ -19,29 +17,28 @@ class pinterest:
         options = Options()
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-extensions")
-        # options.add_argument("--headless")
-        
+        options.add_argument("--headless")
         self.driver = webdriver.Chrome(options=options)
         self.driver.set_script_timeout(60)
+    
+    def scroll_segments(self, height, sections):
+        sub_height = height // sections
+        for i in range(sections):
+            print(f'scrolling section {i}...')
+            self.driver.execute_script(f"window.scrollTo(0, {sub_height*i});")
+            time.sleep(1)
+            self.get_pin_urls()
         
     def scroll_to_bottom(self):
-        
         time.sleep(30)
-        self.get_pin_urls()
-        print('save pin urls...')
 
         try:
             last_height = self.driver.execute_script("return document.body.scrollHeight")
-            scroll_height = last_height / 2
+            
             while True:
                 print(f'last_height = {last_height}')
                 print('-----------------')
-
-                self.driver.execute_script(f"window.scrollTo(0, {scroll_height});")
-                self.get_pin_urls()
-                print('save pin urls...')
-                
-                time.sleep(10)
+                self.scroll_segments(last_height, 10)                                
                 new_height = self.driver.execute_script("return document.body.scrollHeight")
                 print(f'new_height = {new_height}')            
                 
@@ -54,7 +51,7 @@ class pinterest:
             print("Error in scroll_to_bottom:", e)
 
     def save_pin_urls(self):
-        with open('pin_ids.txt', 'a') as file:
+        with open('pin_ids.txt', 'w') as file:
             for pin_id in self.pin_ids_set:
                 file.write(pin_id + '\n')
             
@@ -62,25 +59,13 @@ class pinterest:
         try:
             pins = self.driver.find_elements(By.CSS_SELECTOR, '[data-test-pin-id]')
             if pins:
-                pin_ids = [self.pin_ids_set.add(pin.get_attribute('data-test-pin-id')) for pin in pins]
+                for pin in pins:
+                    self.pin_ids_set.add(pin.get_attribute('data-test-pin-id'))
         except Exception as e:
             print("Error in get_pin_links:", e)
 
-
-    def download_images(pin_links):
-        for link in pin_links:
-            response = requests.get(link)
-            soup = BeautifulSoup(response.content, 'html.parser')
-
-            # Find the image URL (modify selector as needed)
-            image_url = soup.select_one('img.pinImage')['src']
-
-            # Download and save the image
-            img_data = requests.get(image_url).content
-            with open('path/to/save/image.jpg', 'wb') as handler:
-                handler.write(img_data)
-
     def log_in(self):
+        print('login...')
         try:
             login_btn = self.driver.find_element(By.CSS_SELECTOR, ".RCK.Hsu.USg.adn.CCY.NTm.KhY.iyn.oRi.lnZ.wsz.YbY")
             login_btn.click()
@@ -98,18 +83,4 @@ class pinterest:
         except Exception as e:
             print("Login Error: ", e)
 
-
-
-def main():
-    crawler = pinterest()
-    crawler.driver.get('https://www.pinterest.com/huangkaikai/3d-microsoft/')
-    crawler.log_in()
-    crawler.scroll_to_bottom()
-    # download_images(pin_links)
-    # driver.quit()
-
-if __name__ == "__main__":
-    print('start!')
-    main()
-    
     

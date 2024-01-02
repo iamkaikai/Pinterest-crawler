@@ -2,12 +2,13 @@ from PIL import Image
 import os
 import csv
 from datasets import load_dataset
+from caption import captioning
 
 class utility:
     def __init__(self):
         self.file_list = []
-        
-    
+        self.cap = captioning()
+
     def get_dir_file_list(self, dir='downloaded_images'):
         if not os.path.exists(dir):
             print(f"Directory '{dir}' does not exist.")
@@ -56,7 +57,7 @@ class utility:
                 img.save(file_path)
                 print(f'saving {file_path}...')
 
-    def labeling(self, dir, text):
+    def labeling(self, dir, tag):
         csv_file = f'./{dir}/metadata.csv'
         with open(csv_file, 'w', newline='') as f:
             writer = csv.writer(f)
@@ -65,8 +66,14 @@ class utility:
             for filename in os.listdir(dir):
                 if filename in ['.DS_Store','metadata.csv']:
                     continue
-                writer.writerow([filename, text])
-                
+                text_content = self.cap.label_content(f'{dir}/{filename}')
+                text_colors = ", ".join(i for i in self.cap.label_color(f'{dir}/{filename}', 3))
+                prompt = tag + ', ' + text_content + ', ' + text_colors        
+                print(f'labeling {filename}...')
+                print(f'prompt = {prompt}\n')
+                with open(csv_file, 'w', newline='') as f:
+                    writer.writerow([filename, prompt])
+    
     def push_to_HF(self, directory = './resized_images', repo_name=None):
         
         # Get a list of all files in the directory

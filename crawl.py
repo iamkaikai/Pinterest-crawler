@@ -17,24 +17,26 @@ class pinterest:
         options = Options()
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-extensions")
-        options.add_argument("--headless")
+        # options.add_argument("--headless")
         self.driver = webdriver.Chrome(options=options)
         self.driver.set_script_timeout(60)
-    
+        self.last_height = 0
+
     def scroll_segments(self, height, sections):
-        sub_height = height // sections
+        sub_height = (height-self.last_height) // sections
         for i in range(sections):
             print(f'scrolling section {i}...')
-            self.driver.execute_script(f"window.scrollTo(0, {sub_height*i});")
+            self.driver.execute_script(f"window.scrollTo(0, {self.last_height + sub_height*i});")
             time.sleep(1)
             self.get_pin_urls()
+        self.last_height = height
         
     def scroll_to_bottom(self):
-        time.sleep(30)
+        time.sleep(20)
 
         try:
             last_height = self.driver.execute_script("return document.body.scrollHeight")
-            
+                        
             while True:
                 print(f'last_height = {last_height}')
                 print('-----------------')

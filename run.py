@@ -14,7 +14,7 @@ if __name__ == "__main__":
     # downloader = scrapper()
     # downloader.download_images()
         
-    tag = 'ISABELLA-COTIER-LORA'
+    tag = 'ISABELLA-COTIER-ART'
     util = utility()
     # util.get_dir_file_list()
     # util.resize_and_crop()

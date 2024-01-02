@@ -62,17 +62,19 @@ class utility:
         with open(csv_file, 'w', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(['file_name', 'text'])
-            
+            total = len(os.listdir(dir))
+            count = 1
             for filename in os.listdir(dir):
                 if filename in ['.DS_Store','metadata.csv']:
                     continue
                 text_content = self.cap.label_content(f'{dir}/{filename}')
-                text_colors = ", ".join(i for i in self.cap.label_color(f'{dir}/{filename}', 3))
+                text_colors = ", ".join(i for i in self.cap.label_color(f'{dir}/{filename}', 6))
                 prompt = tag + ', ' + text_content + ', ' + text_colors        
-                print(f'labeling {filename}...')
+                print(f'labeling {filename}...({count}/{total})')
                 print(f'prompt = {prompt}\n')
-                with open(csv_file, 'w', newline='') as f:
-                    writer.writerow([filename, prompt])
+                writer.writerow([filename, prompt])
+                f.flush()
+                count += 1
     
     def push_to_HF(self, directory = './resized_images', repo_name=None):
         
@@ -88,7 +90,7 @@ class utility:
             try:
                 with Image.open(file_path) as img:
                     # Convert the image to RGB mode
-                    print(img.info)
+                    # print(img.info)
                     rgb_img = img.convert('RGB')
                     rgb_img.save(file_path)
             except Exception as e:

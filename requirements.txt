@@ -1,0 +1,9 @@
+selenium
+PIL
+sklearn
+numpy
+transformers 
+scipy
+os
+csv
+datasets 

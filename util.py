@@ -9,6 +9,14 @@ class utility:
         self.file_list = []
         self.cap = captioning()
 
+    def clean_folder(self, dir):
+        if os.path.exists(dir) and os.path.isdir(dir):
+            for filename in os.listdir(dir):
+                file_path = os.path.join(dir, filename)
+                if os.path.isfile(file_path):
+                    print(f'Deleting file: {filename}')
+                    os.remove(file_path)
+
     def get_dir_file_list(self, dir='downloaded_images'):
         if not os.path.exists(dir):
             print(f"Directory '{dir}' does not exist.")
@@ -68,7 +76,7 @@ class utility:
                 if filename in ['.DS_Store','metadata.csv']:
                     continue
                 text_content = self.cap.label_content(f'{dir}/{filename}')
-                text_colors = ", ".join(i for i in self.cap.label_color(f'{dir}/{filename}', 6))
+                text_colors = ", ".join(i for i in self.cap.label_color(f'{dir}/{filename}'))
                 prompt = tag + ', ' + text_content + ', ' + text_colors        
                 print(f'labeling {filename}...({count}/{total})')
                 print(f'prompt = {prompt}\n')

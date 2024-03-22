@@ -1,10 +1,11 @@
 import requests
 from bs4 import BeautifulSoup
 import os
+from pathlib import Path
 
 class scrapper:
-    def __init__(self):
-        pass
+    def __init__(self, dir = None):
+        self.dir = dir
     
     def get_img_from_pin_url(self, url):
         if url.isdigit() and len(url) == 18:
@@ -21,8 +22,8 @@ class scrapper:
                 return None
 
     def download_images(self):
-        if not os.path.exists('downloaded_images'):
-            os.makedirs('downloaded_images')
+        directory_path = Path(f'downloaded_images/{self.dir}')
+        directory_path.mkdir(parents=True, exist_ok=True) 
             
         with open('pin_ids.txt', 'r') as file:
             for line in file:
@@ -31,7 +32,7 @@ class scrapper:
                 try:
                     response = requests.get(image_url)
                     if response.status_code == 200:
-                        file_path = os.path.join('downloaded_images', f'image_{pin_id}.jpg')
+                        file_path = os.path.join(directory_path, f'image_{pin_id}.jpg')
                         with open(file_path, 'wb') as img_file:
                             img_file.write(response.content)
                         print(f"Downloaded {pin_id} as {file_path}")

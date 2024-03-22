@@ -33,6 +33,7 @@ class pinterest:
         
     def scroll_to_bottom(self):
         time.sleep(20)
+        self.driver.maximize_window()
 
         try:
             last_height = self.driver.execute_script("return document.body.scrollHeight")

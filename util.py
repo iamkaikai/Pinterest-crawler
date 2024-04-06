@@ -17,23 +17,23 @@ class utility:
                     print(f'Deleting file: {filename}')
                     os.remove(file_path)
 
-    def get_dir_file_list(self, dir='downloaded_images'):
-        if not os.path.exists(dir):
-            print(f"Directory '{dir}' does not exist.")
+    def get_dir_file_list(self, dir):
+        path = 'downloaded_images/' + dir
+        if not os.path.exists(path):
+            print(f"Directory '{path}' does not exist.")
             return []
-        self.file_list = [file for file in os.listdir(dir) if os.path.isfile(os.path.join(dir, file))]
+        self.file_list = [file for file in os.listdir(path) if os.path.isfile(os.path.join(path, file))]
         
-    def resize_and_crop(self, size=(512, 512)):
+    def resize_and_crop(self, dir,size=(512, 512)):
         if not os.path.exists('resized_images'):
                 os.makedirs('resized_images')
         
         count = 0
-        
         for file in self.file_list:
             if file == '.DS_Store':
                 continue
             
-            image_path = os.path.join('downloaded_images', file)
+            image_path = os.path.join(f'downloaded_images/{dir}', file)
             pin_id = file.split('_')[1].split('.')[0]
             
             with Image.open(image_path) as img:
@@ -42,7 +42,7 @@ class utility:
                 
             
                 if img_ratio == target_ratio:
-                    img = img.resize(size, Image.ANTIALIAS)
+                    img = img.resize(size, Image.Resampling.LANCZOS)
                 else:
                     if img_ratio > target_ratio:
                         # Image is wider than desired ratio
@@ -53,7 +53,7 @@ class utility:
                         new_width = size[0]
                         new_height = int(new_width / img_ratio)
 
-                    img = img.resize((new_width, new_height), Image.ANTIALIAS)
+                    img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
                     
                     left = (new_width - size[0]) / 2
                     top = (new_height - size[1]) / 2
@@ -62,6 +62,8 @@ class utility:
                     img = img.crop((left, top, right, bottom))
                     
                 file_path = os.path.join('resized_images', f'image_{pin_id}_{size[0]}_{size[1]}.jpg')
+                if img.mode != 'RGB':
+                    img = img.convert('RGB')
                 img.save(file_path)
                 print(f'saving {file_path}...')
 
@@ -75,9 +77,10 @@ class utility:
             for filename in os.listdir(dir):
                 if filename in ['.DS_Store','metadata.csv']:
                     continue
-                text_content = self.cap.label_content(f'{dir}/{filename}')
+                # text_content = self.cap.label_content(f'{dir}/{filename}')
                 text_colors = ", ".join(i for i in self.cap.label_color(f'{dir}/{filename}'))
-                prompt = tag + ', ' + text_content + ', ' + text_colors        
+                # prompt = tag + ', ' + text_content + ', ' + text_colors
+                prompt = tag + ', ' + text_colors         
                 print(f'labeling {filename}...({count}/{total})')
                 print(f'prompt = {prompt}\n')
                 writer.writerow([filename, prompt])

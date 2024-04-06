@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from dotenv import load_dotenv
+
 import os
 
 
@@ -17,6 +18,8 @@ class pinterest:
         options = Options()
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-extensions")
+        prefs = {"profile.default_content_setting_values.notifications": 2}
+        options.add_experimental_option("prefs", prefs)
         # options.add_argument("--headless")
         self.driver = webdriver.Chrome(options=options)
         self.driver.set_script_timeout(60)
@@ -32,7 +35,9 @@ class pinterest:
         self.last_height = height
         
     def scroll_to_bottom(self):
-        time.sleep(20)
+        time.sleep(5)
+        # Disable notifications - this will automatically deny notifications
+        
         self.driver.maximize_window()
 
         try:
@@ -70,19 +75,20 @@ class pinterest:
     def log_in(self):
         print('login...')
         try:
-            login_btn = self.driver.find_element(By.CSS_SELECTOR, ".RCK.Hsu.USg.adn.CCY.NTm.KhY.iyn.oRi.lnZ.wsz.YbY")
+            login_btn = self.driver.find_element(By.CSS_SELECTOR, ".tBJ.dyH.iFc.sAJ.X8m.tg7.H2s")
             login_btn.click()
             
-            email = self.driver.find_element(By.ID, 'email')
+           
+            WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, '[placeholder="Email"]')))  # Wait for the email field
+            email = self.driver.find_element(By.CSS_SELECTOR, '[placeholder="Email"]')
             email.send_keys(self.email)
-
+        
             pwd = self.driver.find_element(By.ID, 'password')
             pwd.send_keys(self.pwd)
 
             submit_button = self.driver.find_element(By.CSS_SELECTOR, '[data-test-id="registerFormSubmitButton"]')
             submit_button.click()
             print('login success!')
-            time.sleep(10)
         except Exception as e:
             print("Login Error: ", e)
 

@@ -12,11 +12,14 @@ class scrapper:
             url = f'https://www.pinterest.com/pin/{url}'
             response = requests.get(url)
             if response.status_code == 200:
-                soup = BeautifulSoup(response.content, 'html.parser')
-                img_elements = soup.find_all('img')
-                first_img_element = img_elements[0]
-                image_url = first_img_element['src'] if 'src' in first_img_element.attrs else None
-                return image_url
+                try:
+                    soup = BeautifulSoup(response.content, 'html.parser')
+                    img_elements = soup.find_all('img')
+                    first_img_element = img_elements[0]
+                    image_url = first_img_element['src'] if 'src' in first_img_element.attrs else None
+                    return image_url
+                except Exception as e:
+                    print(f"error in getting img {url}...")
             else:
                 print(f"Failed to retrieve the webpage: Status code {response.status_code}")
                 return None

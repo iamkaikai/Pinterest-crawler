@@ -79,6 +79,7 @@ class captioning:
             print(f'n = {n}; score = {score}')
             silhouette_scores.append(score)
         optimal_k = silhouette_scores.index(max(silhouette_scores)) + 3  # +3 because index 0 corresponds to 2 clusters
+        optimal_k += 1                                                   # +1 to make sure important colors are included
         print(f'optimal_k = {optimal_k}')
         return optimal_k
 

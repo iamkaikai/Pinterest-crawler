@@ -4,15 +4,16 @@ from util import utility
 from caption import captioning
 
 boards = [
-    ('https://www.pinterest.com/huangkaikai/matisse/','MATISSEE-ART'),
-    ('https://www.pinterest.com/huangkaikai/photo-illustration/','PHOTO-ILLUSTRATION-ART'),
-    ('https://www.pinterest.com/huangkaikai/impressionism/','IMPRESSIONISM-ART'),
-    ('https://www.pinterest.com/huangkaikai/basquiat/','BASQUIAT-ART'),
-    ('https://www.pinterest.com/huangkaikai/bauhaus/','BAUHAUS-ART'),
-    ('https://www.pinterest.com/huangkaikai/plexus/','FUI-ART'),
-    ('https://www.pinterest.com/huangkaikai/baroque/','BAROQUE'),
-    ('https://www.pinterest.com/huangkaikai/op-art/','OPTICAL-ART'),
-    ('https://www.pinterest.com/huangkaikai/cubism/','CUBISM-ART'),
+    # ('https://www.pinterest.com/huangkaikai/matisse/','MATISSEE-ART'),
+    # ('https://www.pinterest.com/huangkaikai/photo-illustration/','PHOTO-ILLUSTRATION-ART'),
+    # ('https://www.pinterest.com/huangkaikai/impressionism/','IMPRESSIONISM-ART'),
+    # ('https://www.pinterest.com/huangkaikai/basquiat/','BASQUIAT-ART'),
+    # ('https://www.pinterest.com/huangkaikai/bauhaus/','BAUHAUS-ART'),
+    # ('https://www.pinterest.com/huangkaikai/plexus/','FUI-ART'),
+    # ('https://www.pinterest.com/huangkaikai/baroque/','CLASSICAL-ART'),
+    # ('https://www.pinterest.com/huangkaikai/op-art/','OPTICAL-ART'),
+    # ('https://www.pinterest.com/huangkaikai/cubism/','CUBISM-ART'),
+    ('https://www.pinterest.com/huangkaikai/game-map/','GAME-MAP-ART'),
 ]
 
 if __name__ == "__main__":
@@ -31,7 +32,7 @@ if __name__ == "__main__":
         downloader.download_images()
             
         # util.clean_folder('resized_images')
-        # util.get_dir_file_list()
-        # util.resize_and_crop()
+        # util.get_dir_file_list(tag)
+        # util.resize_and_crop(tag)
         # util.labeling('resized_images', tag)
         # util.push_to_HF('./resized_images', tag)
